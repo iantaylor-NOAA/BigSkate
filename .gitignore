@@ -14,3 +14,27 @@ vignettes/*.pdf
 
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth
+
+# most anything other than R files
+*.xlsx
+*.csv
+*.png
+*.pdf
+*.zip
+*.txt
+ageing/
+BigSkate_Doc/
+bio/
+catch/
+indices/
+longnose_conversion/
+longnose2019_models/
+maps/
+maturity/
+models/
+papers/
+photos/
+potential_collaborators.txt/
+pre-assessment workshop/
+SKATE assessments 2019/
+testing_nwfscSurvey/

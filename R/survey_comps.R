@@ -1,3 +1,8 @@
+# load previously extracted data
+# extraction code is in /R/survey_extration_skates.R
+load(file = 'c:/SS/skates/data/BigSkate_survey_extractions_4-22-2019.Rdata')
+library(nwfscSurvey)
+
 strata <- CreateStrataDF.fn(
     names=c("shallow_s", "deep_s","shallow_n", "deep_n"), 
     depths.shallow = c( 55, 183,  55, 183),
@@ -11,8 +16,8 @@ strata <- CreateStrataDF.fn(
 ## 4    deep_n 106872334       183       549            42            49
 
 # design-based indices
-biomassWCGBTS <- Biomass.fn(dir = 'c:/SS/skates/indices/WCGBTS', 
-                            dat = catchWCGBTS.BS,  
+biomass.WCGBTS <- Biomass.fn(dir = 'c:/SS/skates/indices/WCGBTS', 
+                            dat = catch.WCGBTS.BS,  
                             strat.df = strata, 
                             printfolder = "",
                             outputMedian = TRUE)
@@ -52,21 +57,76 @@ table(is.na(bio.WCGBTS.BS$Length_cm), is.na(bio.WCGBTS.BS$Width_cm))
   ## FALSE   346 5135
   ## TRUE      0    4
 
+table(is.na(bio.Tri.BS$Lengths$Length_cm), is.na(bio.Tri.BS$Lengths$Width_cm))
+# subset to 6 samples that have width but not length from the triennial
+sub <- is.na(bio.Tri.BS$Lengths$Length_cm) & !is.na(bio.Tri.BS$Lengths$Width_cm)
+## table(sub)
+## sub
+## FALSE  TRUE 
+##   181     6 
+bio.Tri.BS$Lengths$Length_cm[sub] <- 1.3399*bio.Tri.BS$Lengths$Width_cm[sub]
+table(is.na(bio.Tri.BS$Lengths$Length_cm), is.na(bio.Tri.BS$Lengths$Width_cm))
+  ##       FALSE TRUE
+  ## FALSE     6  181
+
+
 len.bins <- seq(5, 200, 5)
-len <- bio.WCGBTS.BS
-catch <- catchWCGBTS.BS
 dir <- 'c:/SS/skates/bio/survey_comps'
 
-# Calculate the effN
-n = GetN.fn(dir=dir, dat = len, type = "length",
+# Calculate the effN for WCGBTS
+n = GetN.fn(dir=dir, dat = bio.WCGBTS.BS, type = "length",
     species = "others", printfolder = "WCGBTS_comps")
 # The GetN.fn calculated input sample sizes based on Hamel & Stewart bootstrap approach.
 
 # Expand and format length composition data for SS
-LFs <- SurveyLFs.fn(dir = dir, datL = len, datTows = catchWCGBTS.BS,  
+LFs <- SurveyLFs.fn(dir = file.path(dir, 'WCGBTS_comps'),
+                    datL = bio.WCGBTS.BS, datTows = catch.WCGBTS.BS,  
                     strat.df = strata, lgthBins = len.bins, gender = 3, 
                     sexRatioStage = 2, sexRatioUnsexed = 0.5, maxSizeUnsexed = 0, 
                     nSamps = n)
+#### did rounding to 2 digits past decimal in Excel
+## value.columns <- c(paste0("F",len.bins), paste0("M",len.bins))
+## LFs[,value.columns] <- round(LFs[,value.columns], 2)
+
+# Calculate the effN for Triennial
+n.tri <- GetN.fn(dir=dir, dat = bio.Tri.BS$Lengths, type = "length",
+    species = "others", printfolder = "Triennial_comps")
+# The GetN.fn calculated input sample sizes based on Hamel & Stewart bootstrap approach.
+## n2 = GetN.fn(dir=dir, dat = bio.Tri.BS$Lengths, type = "length",
+##     species = "shelfrock", printfolder = "Triennial_comps2")
+## n.LN = GetN.fn(dir=dir, dat = bio.Tri.LN$Lengths, type = "length",
+##     species = "shelfrock", printfolder = "Triennial_comps_LN")
+
+
+# convert width to length for 
+# Expand and format length composition data for SS
+LFs.tri <- SurveyLFs.fn(dir = file.path(dir, 'Triennial_comps'),
+                        datL = bio.Tri.BS$Lengths, datTows = catch.Tri.BS,  
+                        strat.df = strata, lgthBins = len.bins, gender = 3, 
+                        sexRatioStage = 2, sexRatioUnsexed = 0.5, maxSizeUnsexed = 0, 
+                        nSamps = n.tri)
+##### sexRatioStage = 1 caused error (github issue #20)
+## LFs.tri2 <- SurveyLFs.fn(dir = file.path(dir, 'Triennial_comps'),
+##                          datL = bio.Tri.BS$Lengths, datTows = catch.Tri.BS,  
+##                          strat.df = strata, lgthBins = len.bins, gender = 3, 
+##                          sexRatioStage = 1, sexRatioUnsexed = 0.5, maxSizeUnsexed = 0, 
+##                          nSamps = n.tri)
+
+lengths.sexed <- bio.Tri.BS$Lengths[bio.Tri.BS$Lengths$Sex %in% c("F","M"),]
+
+# unexpanded lengths
+LFs.tri.nox <- LFs.tri
+value.col.names <- c(paste0("F",len.bins), paste0("M",len.bins))
+LFs.tri.nox[ , names(LFs.tri.nox) %in% value.col.names] <- NA
+for(y in c(2001,2004)){
+  for(len in len.bins[len.bins!=max(len.bins)]){
+    for(sex in c("F","M")){
+      colname <- paste0(sex, len)
+      LFs.tri.nox[LFs.tri.nox$year == y, colname] <-
+        sum(lengths.sexed$Length_cm > len & 
+  }
+
+
 
 
 # The code offers two options for applying the sex ratio based on expansion stage. The sex ratio will be
@@ -88,3 +148,43 @@ par(mfrow=c(2,1))
 hist(bio.WCGBTS.BS$Length_cm[bio.WCGBTS.BS$Sex=="F"] , breaks=len.bins)
 hist(bio.WCGBTS.BS$Length_cm[bio.WCGBTS.BS$Sex=="M"] , breaks=len.bins)
 
+
+
+
+#============================================================================================
+#Age Biological Data 
+#============================================================================================
+age = bio
+age.bins = 0:15
+
+n.age.WCGBTS = GetN.fn(dir = file.path(dir, 'WCGBTS_comps'),
+    dat = bio.WCGBTS.BS, type = "age", species = "others", printfolder = "forSS")
+
+# Exand and format the marginal age composition data for SS
+Ages <- SurveyAFs.fn(dir = file.path(dir, 'WCGBTS_comps'),
+                     datA = bio.WCGBTS.BS, datTows = catch.WCGBTS.BS,  
+                     strat.df = strata, ageBins = age.bins, 
+                     sexRatioStage = 2, sexRatioUnsexed = 0.50, maxSizeUnsexed = 5, 
+                     gender = 3, nSamps = n.age.WCGBTS)
+
+
+
+PlotFreqData.fn(dir = file.path(dir, 'WCGBTS_comps'),
+                dat = Ages,
+                ylim=c(0, max(age.bins) + 2),
+                yaxs="i",
+                ylab="Age (yr)",
+                dopng=FALSE)
+PlotVarLengthAtAge.fn(dir = file.path(dir, 'WCGBTS_comps'),
+                      dat = bio.WCGBTS.BS, dopng = FALSE) 
+PlotSexRatio.fn(dir = file.path(dir, 'WCGBTS_comps'),
+                dat = bio.WCGBTS.BS, data.type = "age",
+                dopng = FALSE, main = "WCGBTS")
+
+#============================================================================================
+# Conditional Ages
+#============================================================================================
+CAAL.WCGBTS.BS <- SurveyAgeAtLen.fn (dir = file.path(dir, 'WCGBTS_comps'),
+                                     datAL = bio.WCGBTS.BS, datTows = catch.WCGBTS.BS, 
+                                     strat.df = strata, lgthBins = len.bins,
+                                     ageBins = age.bins, partition = 0)
