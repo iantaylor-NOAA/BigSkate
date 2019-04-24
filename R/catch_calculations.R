@@ -133,18 +133,22 @@ lines(landings.BS$Year, landings.BS$Landings_mt + landings.BS$discard_mean_catch
       lwd=2, col=6)
 
 #yr, seas, fleet, catch, catch_se
-landings <- data.frame(yr = landings.BS$Year,
-                       seas = 1,
-                       fleet = ifelse(landings.BS$Year < 1995, 2, 1),
-                       catch = landings.BS$Landings_mt,
-                       catch_se = 0.01)
-discards <- data.frame(yr = landings.BS$Year,
-                       seas = 1,
-                       fleet = 2,
-                       catch = landings.BS$Landings_mt,
-                       catch_se = 0.01)
-current <- data.frame(yr = landings.BS$Year,
-                       seas = 1,
-                       fleet = 2,
-                       catch = landings.BS$Landings_mt,
-                       catch_se = 0.01)
+landings.table <- data.frame(yr = landings.BS$Year,
+                             seas = 1,
+                             fleet = ifelse(landings.BS$Year < 1995, 2, 1),
+                             catch = round(landings.BS$Landings_mt, 1),
+                             catch_se = 0.01,
+                             note = ifelse(landings.BS$Year < 1995,
+                                 "#_historical_landings",
+                                 "#_current_landings"))
+disc_mort <- 0.5
+discards.table <- data.frame(yr = landings.BS$Year,
+                             seas = 1,
+                             fleet = 3,
+                             catch = round(disc_mort *
+                                             landings.BS$discard_mean_catch_mean_rate_mt, 1),
+                             catch_se = 0.01,
+                             note = "#_estimated_discards")
+discards.table <- discards.table[discards.table$yr < 1995,]
+write.csv(rbind(landings.table, discards.table),
+          file = file.path(catch.dir, 'catch_for_SS_4-23-2019.csv'), row.names=FALSE)

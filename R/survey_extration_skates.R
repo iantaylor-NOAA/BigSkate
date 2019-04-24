@@ -9,6 +9,13 @@ bio.WCGBTS.BS   <- PullBio.fn(Name = "big skate", SurveyName = "NWFSC.Combo")
 catch.Tri.BS <- PullCatch.fn(Name = "big skate", SurveyName = "Triennial")
 bio.Tri.BS   <- PullBio.fn(Name = "big skate", SurveyName = "Triennial")
 
+catch.Tri.LN <- PullCatch.fn(Name = "longnose skate", SurveyName = "Triennial")
+bio.Tri.LN   <- PullBio.fn(Name = "longnose skate", SurveyName = "Triennial")
+
+# save data for offline use
+save(catch.WCGBTS.BS, bio.WCGBTS.BS,
+     catch.Tri.BS,    bio.Tri.BS,
+     file = 'c:/SS/skates/data/BigSkate_survey_extractions_4-22-2019.Rdata')
 
 
 # WGBTS for Longnose Skate

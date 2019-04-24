@@ -106,26 +106,37 @@ LFs.tri <- SurveyLFs.fn(dir = file.path(dir, 'Triennial_comps'),
                         sexRatioStage = 2, sexRatioUnsexed = 0.5, maxSizeUnsexed = 0, 
                         nSamps = n.tri)
 ##### sexRatioStage = 1 caused error (github issue #20)
-## LFs.tri2 <- SurveyLFs.fn(dir = file.path(dir, 'Triennial_comps'),
-##                          datL = bio.Tri.BS$Lengths, datTows = catch.Tri.BS,  
-##                          strat.df = strata, lgthBins = len.bins, gender = 3, 
-##                          sexRatioStage = 1, sexRatioUnsexed = 0.5, maxSizeUnsexed = 0, 
-##                          nSamps = n.tri)
+LFs.tri2 <- SurveyLFs.fn(dir = file.path(dir, 'Triennial_comps'),
+                         datL = bio.Tri.BS$Lengths, datTows = catch.Tri.BS,  
+                         strat.df = strata, lgthBins = len.bins, gender = 3, 
+                         sexRatioStage = 1, sexRatioUnsexed = 0.5, maxSizeUnsexed = 0, 
+                         nSamps = n.tri)
 
+# remove unsexed fish for unexpanded lengths
 lengths.sexed <- bio.Tri.BS$Lengths[bio.Tri.BS$Lengths$Sex %in% c("F","M"),]
 
 # unexpanded lengths
+# copy expanded table already created by SurveyLFs.fn
 LFs.tri.nox <- LFs.tri
+# which columns have values
 value.col.names <- c(paste0("F",len.bins), paste0("M",len.bins))
+# set all values to NA initially
 LFs.tri.nox[ , names(LFs.tri.nox) %in% value.col.names] <- NA
+# loop over years, bins, sexes
 for(y in c(2001,2004)){
-  for(len in len.bins[len.bins!=max(len.bins)]){
+  for(len in len.bins){
     for(sex in c("F","M")){
       colname <- paste0(sex, len)
       LFs.tri.nox[LFs.tri.nox$year == y, colname] <-
-        sum(lengths.sexed$Length_cm > len & 
+        sum(lengths.sexed$Year == y &
+              lengths.sexed$Sex == sex &
+                floor(lengths.sexed$Length_cm) %in% (len + 0:4))
+    }
   }
-
+}
+write.csv(LFs.tri.nox,
+          file=file.path(dir, 'Triennial_comps/forSS', "unexpanded_comps.csv"),
+          row.names=FALSE)
 
 
 
@@ -135,8 +146,12 @@ for(y in c(2001,2004)){
 # NWFSC combo survey data in the past).
 
 
-PlotFreqData.fn(dir = dir, dat = LFs,
-                main = "NWFSC Groundfish Bottom Trawl Survey",
+PlotFreqData.fn(dir = dir, dat = LFs.tri,
+                main = "Triennial",
+                ylim=c(0, max(len.bins) + 4), yaxs="i",
+                ylab="Length (cm)", dopng = TRUE)
+PlotFreqData.fn(dir = dir, dat = LFs.tri2,
+                main = "Triennial sexRatioStage = 1",
                 ylim=c(0, max(len.bins) + 4), yaxs="i",
                 ylab="Length (cm)", dopng = TRUE)
 PlotSexRatio.fn(dir = dir, dat = len, data.type = "length",
