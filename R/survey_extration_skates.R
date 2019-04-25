@@ -8,6 +8,8 @@ catch.WCGBTS.BS <- PullCatch.fn(Name = "big skate", SurveyName = "NWFSC.Combo")
 bio.WCGBTS.BS   <- PullBio.fn(Name = "big skate", SurveyName = "NWFSC.Combo")
 catch.Tri.BS <- PullCatch.fn(Name = "big skate", SurveyName = "Triennial")
 bio.Tri.BS   <- PullBio.fn(Name = "big skate", SurveyName = "Triennial")
+catch.WCGBTS.Starry <- PullCatch.fn(Name = "starry flounder", SurveyName = "NWFSC.Combo")
+catch.Tri.Starry <- PullCatch.fn(Name = "starry flounder", SurveyName = "Triennial")
 
 catch.Tri.LN <- PullCatch.fn(Name = "longnose skate", SurveyName = "Triennial")
 bio.Tri.LN   <- PullBio.fn(Name = "longnose skate", SurveyName = "Triennial")

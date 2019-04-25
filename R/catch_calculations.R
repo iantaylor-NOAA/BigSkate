@@ -110,7 +110,7 @@ landings.BS$total_3yr_catch_3yr_rate_mt <-
 
 # plot landings and rates
 plot(landings.BS[,c("Year","Landings_mt")],
-                 type='h', lwd=6, lend=3, ylim=c(0,2000), yaxs='i', col=4)
+                 type='h', lwd=6, lend=3, ylim=c(0,3000), yaxs='i', col=4)
 abline(lm.landings, col=3)
 abline(h = mean(landings.BS$Landings_mt[yrs.sub]), col=2)
 
