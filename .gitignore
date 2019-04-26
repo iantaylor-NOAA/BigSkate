@@ -22,6 +22,7 @@ vignettes/*.pdf
 *.pdf
 *.zip
 *.txt
+*.Rdata
 ageing/
 BigSkate_Doc/
 bio/
