@@ -73,7 +73,7 @@ ncs_1spec <- read.csv(file.path(dir.dis, 'WCGOP discard rates',
 # plot was written to C:\SS\skates\discards\
 head(ncs_2spec)
 # rates for SS
-SSinputs <- rbind(ncs_2spec[ncs_2spec$ryear < 2011 & ncs_2spec$gear3 == "Trawl",
+SSinputs <- rbind(ncs_3spec[ncs_3spec$ryear < 2011 & ncs_3spec$gear3 == "Trawl",
                             c('ryear','Observed_Ratio','CV.Boot_Ratio')],
                   data.frame(cs_2spec[cs_2spec$ryear %in% 2011:2014 &
                                         cs_2spec$gear3 == "Trawl",
@@ -103,3 +103,23 @@ SSinputs
 ## 121  2015          0.129         0.010
 ## 14   2016          0.156         0.010
 ## 16   2017          0.140         0.010
+
+### alternative including Longnose for the years up to 2011
+data.frame(SSinputs[,1], month=7, fleet=1, SSinputs[,2:3])
+##     SSinputs...1. month fleet Observed_Ratio CV.Boot_Ratio
+## 3            2002     7     1          0.650         0.057
+## 6            2003     7     1          0.381         0.139
+## 8            2004     7     1          0.554         0.081
+## 10           2005     7     1          0.502         0.095
+## 12           2006     7     1          0.427         0.087
+## 14           2007     7     1          0.486         0.083
+## 16           2008     7     1          0.288         0.094
+## 18           2009     7     1          0.259         0.097
+## 20           2010     7     1          0.156         0.117
+## 31           2011     7     1          0.099         0.010
+## 61           2012     7     1          0.104         0.010
+## 9            2013     7     1          0.124         0.010
+## 121          2014     7     1          0.119         0.010
+## 122          2015     7     1          0.129         0.010
+## 141          2016     7     1          0.156         0.010
+## 161          2017     7     1          0.140         0.010
