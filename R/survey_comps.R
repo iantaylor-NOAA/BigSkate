@@ -77,6 +77,7 @@ dir <- 'c:/SS/skates/bio/survey_comps'
 n = GetN.fn(dir=dir, dat = bio.WCGBTS.BS, type = "length",
     species = "others", printfolder = "WCGBTS_comps")
 # The GetN.fn calculated input sample sizes based on Hamel & Stewart bootstrap approach.
+# "The effN sample size is calculated as 2.38 multiplied by the number of tows in each year."
 
 # Expand and format length composition data for SS
 LFs <- SurveyLFs.fn(dir = file.path(dir, 'WCGBTS_comps'),
