@@ -1,4 +1,5 @@
 getbs <- function(n, plot = FALSE){
+  require(r4ss)
   # function to figure out full path associated with a given model number,
   # run SS_output and assign results to an object with a name like "bs9"
   bsdir <- 'C:/SS/skates/models/'

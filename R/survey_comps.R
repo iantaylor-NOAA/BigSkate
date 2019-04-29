@@ -170,7 +170,8 @@ hist(bio.WCGBTS.BS$Length_cm[bio.WCGBTS.BS$Sex=="M"] , breaks=len.bins)
 #============================================================================================
 #Age Biological Data 
 #============================================================================================
-age = bio
+#age = bio
+dir <- 'c:/SS/skates/bio/survey_comps'
 age.bins = 0:15
 
 n.age.WCGBTS = GetN.fn(dir = file.path(dir, 'WCGBTS_comps'),

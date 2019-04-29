@@ -53,12 +53,13 @@ lm.landings$coeff[1] + 1995*lm.landings$coeff[2]
 mean.landings <- mean(landings.BS$Landings_mt[yrs.sub],
                       na.rm = TRUE)
 mean.landings
-## [1] 62.37022
+## [1] 63.21791
 
 # mean discard rate
 mean.discard.rate.LN <-
   mean(landings.BS$discard.rate.LN[yrs.sub],
        na.rm=TRUE)
+## [1] 0.924647
 
 # linear regression (non-significant increase of 0.0003 per year)
 lm.discard.rate <- lm(discard.rate.LN ~ Year,

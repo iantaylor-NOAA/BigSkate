@@ -1,6 +1,7 @@
 # load some WCGOP data from a few years ago
 if(FALSE){
   load('C:/data/WCGOP/Observer_Catch_Data_2002_2015.Rdat')
+  load('C:/data/WCGOP/Observer_Biological_Data_2002_2015.Rdat')
 }
 
 # list of all species
@@ -123,3 +124,14 @@ data.frame(SSinputs[,1], month=7, fleet=1, SSinputs[,2:3])
 ## 122          2015     7     1          0.129         0.010
 ## 141          2016     7     1          0.156         0.010
 ## 161          2017     7     1          0.140         0.010
+
+## look at discard weights
+bio <- OBBio[OBBio$COMMON_NAME == "Big Skate",]
+plot(bio$LENGTH[bio$SPECIES_NUMBER==1],
+     bio$SPECIES_WEIGHT[bio$SPECIES_NUMBER==1], ylim=c(0,10))
+abline(h = mean(bio$SPECIES_WEIGHT/bio$SPECIES_NUMBER, na.rm=TRUE))
+mean(bio$SPECIES_WEIGHT/bio$SPECIES_NUMBER, na.rm=TRUE)
+## [1] 3.077367
+abline(v = mean(bio$LENGTH, na.rm=TRUE))
+mean(bio$LENGTH, na.rm=TRUE)
+## [1] 52.79304
