@@ -62,5 +62,6 @@ Avg_Weight <- Avg_Weight[Avg_Weight$Gear == "Trawl",]
 
 plot(Avg_Weight$Year, Avg_Weight$AVG_WEIGHT.Mean, type='o', ylim=c(0,10))
 points(Avg_Weight$Year, Avg_Weight$AVG_WEIGHT.Median, type='o', col=2)
+points(Avg_Weight$Year, Avg_Weight$Wghtd.AVG_W, type='o', col=4)
 
 
