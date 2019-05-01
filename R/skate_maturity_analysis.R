@@ -180,7 +180,11 @@ mat.table.BS2 <- mat.table(bins=seq(5,200,5),
                            mature=Big_f2$Biological_maturity)
 #### make plot
 plot.mat(mat.table.BS, fit.mat.glm.BS, scale=.8)
+
+png(file.path(dir, "BigSkate_maturity.png"), res=300, units='in', width=6.5, height=5)
+par(mar=c(4,4,1,1))
 plot.mat(mat.table.BS2, fit.mat.glm.BS2, scale=1.0)
+dev.off()
 
 # -19.5017       0.1316  
 -fit.mat.glm.BS2$coeff[1]/fit.mat.glm.BS2$coeff[2]

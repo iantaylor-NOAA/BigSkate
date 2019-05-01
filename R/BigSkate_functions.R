@@ -5,6 +5,7 @@ getbs <- function(n, plot = FALSE){
   bsdir <- 'C:/SS/skates/models/'
   mods <- dir(bsdir)
   mod <- mods[grep(pattern = paste0("bigskate(0)*", n), mods)]
+  message("reading model from: ", mod)
   out <- SS_output(file.path(bsdir, mod))
   assign(x=paste0("bs", n), value=out, pos=1)
   if(plot){

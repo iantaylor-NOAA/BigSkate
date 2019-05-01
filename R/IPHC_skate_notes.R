@@ -11,6 +11,10 @@ iphc.skate <- read.csv(file.path(iphc.dir,
 iphc.fish  <- read.csv(file.path(iphc.dir,
                                  'TaylorI20190318_FISS-skate-spp fish.csv'),
                        stringsAsFactors=FALSE)
+# hook adjustment factors
+iphc.haf <- read.csv(file.path(iphc.dir,
+                               'TaylorI20190423-FISS-HookAdj.csv'),
+                     stringsAsFactors=FALSE)
 
 # load R packages
 require(maps)

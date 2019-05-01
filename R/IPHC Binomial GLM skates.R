@@ -8,6 +8,18 @@
 iphc.dir <- 'c:/SS/skates/indices/IPHC/'
 load(file=file.path(iphc.dir, "iphc.data_4-10-2019.Rdata"))
 
+# hook adjustment factors
+iphc.haf <- read.csv(file.path(iphc.dir,
+                               'TaylorI20190423-FISS-HookAdj.csv'),
+                     stringsAsFactors=FALSE)
+# add hook adjustment factors to iphc.US table loaded above:
+iphc.US$h.adj <- NA
+for(irow in 1:nrow(iphc.US)){
+  iphc.US$h.adj[irow] <- iphc.haf$h.adj[iphc.haf$stlkey == iphc.US$stlkey[irow]]
+}
+# look at 
+
+
 require(MCMCpack)
 require(Hmisc)
 

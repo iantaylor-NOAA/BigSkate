@@ -135,3 +135,12 @@ mean(bio$SPECIES_WEIGHT/bio$SPECIES_NUMBER, na.rm=TRUE)
 abline(v = mean(bio$LENGTH, na.rm=TRUE))
 mean(bio$LENGTH, na.rm=TRUE)
 ## [1] 52.79304
+
+
+#### Pikitch data from John Wallace
+load('C:/SS/skates/discards/Pikitch rates/PikDiscardExtCatchBigSkate.RData')
+
+mean((PikDiscardExtCatchBigSkate$DiscWtExt.lb / PikDiscardExtCatchBigSkate$DiscNumExt)[PikDiscardExtCatchBigSkate$DiscNumExt > 100])
+## [1] 1.264087
+plot(PikDiscardExtCatchBigSkate$DiscNumExt, PikDiscardExtCatchBigSkate$DiscWtExt.lb / PikDiscardExtCatchBigSkate$DiscNumExt)
+

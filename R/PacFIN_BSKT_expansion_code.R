@@ -1,6 +1,6 @@
 
 #install.packages("devtools")
-devtools::install_github("nwfsc-assess/PacFIN.Utilities")
+#devtools::install_github("nwfsc-assess/PacFIN.Utilities")
 devtools::install_github("nwfsc-assess/PacFIN.Utilities", ref="ian_suggestions")
 library(PacFIN.Utilities)
 
@@ -21,9 +21,11 @@ if(Sys.info()["user"] == "Ian.Taylor"){
 }
 
 # Load John Wallace's BDS .dmp file to R console
-load(file.path(pacfin.dir, "PacFIN.BSKT.bds.24.Apr.2019.dmp"))
+## load(file.path(pacfin.dir, "PacFIN.BSKT.bds.24.Apr.2019.dmp"))
+## PacFIN.BSKT.BDS <- PacFIN.BSKT.bds.24.Apr.2029
+load(file.path(pacfin.dir, "PacFIN.BSKT.bds.30.Apr.2019.dmp"))
+PacFIN.BSKT.BDS <- PacFIN.BSKT.bds.30.Apr.2019
 
-PacFIN.BSKT.BDS <- PacFIN.BSKT.bds.24.Apr.2029
 
 # filter out outliers discovered in the age-length
 # comparison at the bottom of this script
@@ -54,6 +56,13 @@ PacFIN.BSKT.BDS$FISH_LENGTH[sub] <- 3.824 + 10.927 * PacFIN.BSKT.BDS$FISH_LENGTH
 
 #Check how many samples are in the data
 #table(PacFIN.BSKT.BDS$SAMPLE_NO)
+table(PacFIN.BSKT.BDS$FISH_LENGTH_TYPE)
+##    A    F    R    T 
+## 1309    2  507 5945 
+
+table(PacFIN.BSKT.BDS$SAMPLE_METHOD)
+##    R    S 
+## 7697   66
 
 #Clean PacFIN bds file
 # note that all lengths types have already been converted to total length above
@@ -62,18 +71,18 @@ PacFIN.BSKT.BDS.clean <- cleanPacFIN(PacFIN.BSKT.BDS,
                                      keep_INPFC = c("VUS","CL","VN","COL","NC","SC","EU","CP","EK","MT"))
 ## Removal Report
 
-## Records in input:                  7749 
+## Records in input:                  7763 
 ## Records not in USINPFC             0 
-## Records not in INPFC_AREA:         22 
+## Records not in INPFC_AREA:         0 
 ## Records in bad INPFC_AREA:         0 
 ## Records in badRecords list:        0 
 ## Records with bad SAMPLE_TYPE       2 
-## Records with bad SAMPLE_METHOD     0 
+## Records with bad SAMPLE_METHOD     66 
 ## Records with no SAMPLE_NO          0 
 ## Records with no usable length      20 
-## Records remaining:                 7705 
+## Records remaining:                 7675
 
-write.csv(PacFIN.BSKT.BDS.clean, file = file.path(pacfin.dir, "PacFIN.BSKT.BDS_cleaned.csv"))
+write.csv(PacFIN.BSKT.BDS.clean, file = file.path(pacfin.dir, "PacFIN.BSKT.BDS_cleaned_4-30-2019.csv"))
 
 #==============================================================
 #==================  Stratification  ==========================
@@ -81,7 +90,7 @@ write.csv(PacFIN.BSKT.BDS.clean, file = file.path(pacfin.dir, "PacFIN.BSKT.BDS_c
 
 table(PacFIN.BSKT.BDS.clean$geargroup) 
  ## HKL  TWL 
- ## 168 7537 
+ ## 158 7517 
 
 PacFIN.BSKT.BDS.clean$mygear <- PacFIN.BSKT.BDS.clean$geargroup
 
@@ -154,9 +163,32 @@ writeComps(Lcomps, fname = file.path(pacfin.dir, "PacFIN.BSKT.BDS_length_comps_4
 #==============================================================
 
 ## Ages:
+#Clean PacFIN bds file again, but include non-random sampling
+PacFIN.BSKT.BDS.clean.ages <- cleanPacFIN(PacFIN.BSKT.BDS,
+                                          keep_length_type = c("A","F","R","T"),
+                                          keep_INPFC = c("VUS","CL","VN","COL","NC","SC","EU","CP","EK","MT"),
+                                          keep_sample_method = c("R", "S"))
+## Removal Report
 
-PacFIN.BSKT.BDS.ages <- cleanAges(PacFIN.BSKT.BDS.clean, minAge = 0,
-                                  keep_age_methods=4)
+## Records in input:                  7763 
+## Records not in USINPFC             0 
+## Records not in INPFC_AREA:         0 
+## Records in bad INPFC_AREA:         0 
+## Records in badRecords list:        0 
+## Records with bad SAMPLE_TYPE       2 
+## Records with bad SAMPLE_METHOD     0 
+## Records with no SAMPLE_NO          0 
+## Records with no usable length      20 
+## Records remaining:                 7741
+
+PacFIN.BSKT.BDS.ages <- cleanAges(PacFIN.BSKT.BDS.clean.ages, minAge = 0,
+                                  keep_age_methods=c(4,"X"))
+## Removal report
+
+## Records in input:                   7741 
+## Records with age less than min:     7124 
+## Records with bad agemethods:        0 
+## Records remaining:                  617
 
 PacFIN.BSKT.BDS.ages.exp1 <- getExpansion_1(PacFIN.BSKT.BDS.ages,
                                             maxExp = 0.95,
@@ -168,14 +200,35 @@ PacFIN.BSKT.BDS.ages.exp1 <- getExpansion_1(PacFIN.BSKT.BDS.ages,
 PacFIN.BSKT.BDS.ages.exp1$Final_Sample_Size <-
   PacFIN.BSKT.BDS.ages.exp1$Expansion_Factor_1
 
-### can't run getExpansion_2 while there are only samples from OR
-## PacFIN.BSKT.BDS.ages.exp2 <- getExpansion_2(PacFIN.BSKT.BDS.ages.exp1, Catch,
-##                                             Convert=TRUE, maxExp = 0.95)
+table(PacFIN.BSKT.BDS.ages$state)
+##  OR  WA 
+## 449 168 
+PacFIN.BSKT.BDS.ages.exp1$stratification <- PacFIN.BSKT.BDS.ages$state
+
+# get state-specific catch estimates
+catch.dir <- 'C:/SS/skates/catch'
+landings <- read.csv(file.path(catch.dir, "Big skate catches for Ian landings.csv"))
+table(PacFIN.BSKT.BDS.ages.exp1$SAMPLE_YEAR)
+## 2004 2008 2009 2010 2011 2018 
+##   11   70  142  102  200   92 
+Catch <- data.frame(Year = 2004:2018,
+                    WA = NA,
+                    OR = NA)
+for(state in c("WA","OR")){
+  for(y in Catch$Year){
+    sub <- landings$Year == y & landings$State == state
+    Catch[Catch$Year == y, state] <- sum(landings$Landings..mt.[sub])
+  }
+}                                          
+
+### getExpansion_2 
+PacFIN.BSKT.BDS.ages.exp2 <- getExpansion_2(PacFIN.BSKT.BDS.ages.exp1, Catch,
+                                            Convert=TRUE, maxExp = 0.95)
 
 # expansion factors 1 and 2
-## PacFIN.BSKT.BDS.ages.exp2$Final_Sample_Size <-
-##   PacFIN.BSKT.BDS.ages.exp2$Expansion_Factor_1 *
-##      PacFIN.BSKT.BDS.ages.exp2$Expansion_Factor_2
+PacFIN.BSKT.BDS.ages.exp2$Final_Sample_Size <-
+  PacFIN.BSKT.BDS.ages.exp2$Expansion_Factor_1 *
+     PacFIN.BSKT.BDS.ages.exp2$Expansion_Factor_2
 
 
 Acomps.exp1 = getComps(PacFIN.BSKT.BDS.ages.exp1, Comps="AGE")

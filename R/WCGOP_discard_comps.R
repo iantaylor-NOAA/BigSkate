@@ -60,8 +60,33 @@ Avg_Weight <- read.csv(file.path(discard_comp_dir,
 # remove non-trawl
 Avg_Weight <- Avg_Weight[Avg_Weight$Gear == "Trawl",]
 
+# make a plots to compare mean, median, and weighted average
 plot(Avg_Weight$Year, Avg_Weight$AVG_WEIGHT.Mean, type='o', ylim=c(0,10))
 points(Avg_Weight$Year, Avg_Weight$AVG_WEIGHT.Median, type='o', col=2)
 points(Avg_Weight$Year, Avg_Weight$Wghtd.AVG_W, type='o', col=4)
 
-
+# create table to paste into data file
+SSinput <- data.frame(Year = Avg_Weight$Year,
+                      Month = 7,
+                      Fleet = 1,
+                      Part = 1,
+                      Type = 2,
+                      Wghtd.AVG_W_kg = round(Avg_Weight$Wghtd.AVG_W/2.205, 4),
+                      Wghtd.AVG_W.CV = round(Avg_Weight$Wghtd.AVG_W.SD/Avg_Weight$Wghtd.AVG_W, 4))
+##    Year Month Fleet Part Type Wghtd.AVG_W_kg Wghtd.AVG_W.CV
+## 1  2002     7     1    1    2         2.4332         0.2960
+## 2  2003     7     1    1    2         1.3621         0.1637
+## 3  2004     7     1    1    2         1.3525         0.1747
+## 4  2005     7     1    1    2         1.7997         0.1748
+## 5  2006     7     1    1    2         1.3914         0.2492
+## 6  2007     7     1    1    2         1.2598         0.2315
+## 7  2008     7     1    1    2         1.1066         0.2681
+## 8  2009     7     1    1    2         1.2040         0.1851
+## 9  2010     7     1    1    2         0.8579         0.2437
+## 10 2011     7     1    1    2         0.8099         0.0983
+## 11 2012     7     1    1    2         0.8445         0.1243
+## 12 2013     7     1    1    2         1.5601         0.1021
+## 13 2014     7     1    1    2         1.4196         0.0415
+## 14 2015     7     1    1    2         1.4727         0.0556
+## 15 2016     7     1    1    2         1.5104         0.0833
+## 16 2017     7     1    1    2         1.9118         0.0752
