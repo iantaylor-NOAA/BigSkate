@@ -232,6 +232,7 @@ PacFIN.BSKT.BDS.ages.exp2$Final_Sample_Size <-
 
 
 Acomps.exp1 = getComps(PacFIN.BSKT.BDS.ages.exp1, Comps="AGE")
+Acomps.exp2 = getComps(PacFIN.BSKT.BDS.ages.exp2, Comps="AGE")
 
 # skipping 4 out of 65 unsexed fish for now
 ## Acomps = doSexRatio(Acomps)
@@ -242,11 +243,28 @@ marginal_ages <- writeComps(Acomps.exp1,
                             partition = 2, ageErr = 1, returns = "FthenM",
                             dummybins = FALSE, sum1 = TRUE,
                             overwrite = TRUE, verbose = TRUE)
+
+marginal_ages <- writeComps(Acomps.exp2,
+                            fname = file.path(pacfin.dir, "PacFIN.BSKT.BDS_age_comps_4-30-2019.csv"),
+                            abins = BSKT.ABINS,
+                            partition = 2, ageErr = 1, returns = "FthenM",
+                            dummybins = FALSE, sum1 = TRUE,
+                            overwrite = TRUE, verbose = TRUE)
+
 # unexpanded ages
 PacFIN.BSKT.BDS.ages$Final_Sample_Size <- 1
 Acomps.nox = getComps(PacFIN.BSKT.BDS.ages, Comps="AGE")
 marginal_ages_nox <- writeComps(Acomps.nox,
                                 fname = file.path(pacfin.dir, "PacFIN.BSKT.BDS_age_comps_nox_4-27-2019.csv"),
+                                abins = BSKT.ABINS,
+                                partition = 2, ageErr = 1, returns = "FthenM",
+                                dummybins = FALSE, sum1 = TRUE,
+                                overwrite = TRUE, verbose = TRUE)
+
+PacFIN.BSKT.BDS.ages$Final_Sample_Size <- 1
+Acomps.nox = getComps(PacFIN.BSKT.BDS.ages, Comps="AGE")
+marginal_ages_nox <- writeComps(Acomps.nox,
+                                fname = file.path(pacfin.dir, "PacFIN.BSKT.BDS_age_comps_nox_4-30-2019.csv"),
                                 abins = BSKT.ABINS,
                                 partition = 2, ageErr = 1, returns = "FthenM",
                                 dummybins = FALSE, sum1 = TRUE,
@@ -266,14 +284,14 @@ ALcomps$lengthcm <- 5*floor(ALcomps$lengthcm / 5)
 #ALcomps <- doSexRatio(ALcomps) 
 
 CAAL_F <- writeComps(ALcomps,
-                     fname = file.path(pacfin.dir, "PacFIN.BSKT.BDS_AAL_comps.csv"),
+                     fname = file.path(pacfin.dir, "PacFIN.BSKT.BDS_AAL_comps_5-1-2019.csv"),
                      abins = BSKT.ABINS,
                      lbins = BSKT.LBINS,
                      partition = 2, ageErr = 1, returns = "Fout",
                      dummybins = FALSE, sum1 = FALSE,
                      overwrite = TRUE, verbose = TRUE)
 CAAL_M <- writeComps(ALcomps,
-                     fname = file.path(pacfin.dir, "PacFIN.BSKT.BDS_AAL_comps.csv"),
+                     fname = file.path(pacfin.dir, "PacFIN.BSKT.BDS_AAL_comps_5-1-2019.csv"),
                      abins = BSKT.ABINS,
                      lbins = BSKT.LBINS,
                      partition = 2, ageErr = 1, returns = "Mout",
@@ -296,8 +314,9 @@ ages_fixed <- data.frame(year = all_ages$fishyr,
 ages_fixed$LbinHi <- ages_fixed$LbinLo
 names(ages_fixed)[names(ages_fixed) %in% paste0("A",0:15)] <- paste0("F",0:15)
 names(ages_fixed)[names(ages_fixed) %in% paste0("A",0:15,".1")] <- paste0("M",0:15)
-write.csv(ages_fixed,
-          file = file.path(pacfin.dir, "PacFIN.BSKT.BDS_AAL_comps_forSS.csv"),
+ages_fixed2 <- ages_fixed[order(ages_fixed$year, ages_fixed$fleet, ages_fixed$LbinLo, ages_fixed$gender),]
+write.csv(ages_fixed2,
+          file = file.path(pacfin.dir, "PacFIN.BSKT.BDS_AAL_comps_forSS_5-1-2019.csv"),
           row.names=FALSE)
 
 #==============================================================
