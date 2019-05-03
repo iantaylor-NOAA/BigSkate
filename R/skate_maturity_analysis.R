@@ -31,10 +31,10 @@ mat.table <- function(bins, len, mature){
 
 plot.mat <- function(mat.table, mat.glm, scale=0.5){
   # function to plot maturity points vs. GLM fit
-  
+  par(mar=c(4,4,1,1))
   # make empty plot
   plot(0, type='n', xlim=range(mat.table$bin), ylim=c(0,1),
-       xlab="Length", ylab="Proportion mature", yaxs='r',
+       xlab="Length (cm)", ylab="Proportion mature", yaxs='r',
        axes=FALSE)
   axis(1)
   axis(2, at=seq(0,1,.25), las=1)
@@ -118,7 +118,7 @@ fit.mat.glm.LN.m <- glm (maturity ~ 1 + length,
                              maturity = L_m$Biological_maturity),
                          family = binomial(link ="logit"))
 
-summary(fit.mat.glm)
+summary(fit.mat.glm.LN.m)
 
 Aglm<- -8.435004 
 Bglm<- 0.078413
@@ -181,10 +181,13 @@ mat.table.BS2 <- mat.table(bins=seq(5,200,5),
 #### make plot
 plot.mat(mat.table.BS, fit.mat.glm.BS, scale=.8)
 
-png(file.path(dir, "BigSkate_maturity.png"), res=300, units='in', width=6.5, height=5)
+png(file.path(dir, "BigSkate_maturity.png"), res=300, units='in', width=6.5, height=5,
+    pointsize=10)
 par(mar=c(4,4,1,1))
 plot.mat(mat.table.BS2, fit.mat.glm.BS2, scale=1.0)
 dev.off()
+file.copy(file.path(dir, "BigSkate_maturity.png"),
+          file.path(dir, "../../BigSkate_Doc/Figures/BigSkate_maturity.png"))
 
 # -19.5017       0.1316  
 -fit.mat.glm.BS2$coeff[1]/fit.mat.glm.BS2$coeff[2]
